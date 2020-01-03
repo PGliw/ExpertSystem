@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.pwr.expertsystem.adapters.ResultsAdapter
+import com.pwr.expertsystem.business_logic.Rule
 import kotlinx.android.synthetic.main.fragment_results.*
 
 /**
@@ -31,13 +32,19 @@ class ResultsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        // Clear the previous rule selection if any
+        mainViewModel.ruleToExplain = null
+
         recycler_fragment_results_risk_groups.layoutManager = LinearLayoutManager(requireContext())
-        val adapter = ResultsAdapter(mainViewModel.interfaceEngine.riskGroupsRules)
+        val adapter = ResultsAdapter(mainViewModel.interfaceEngine.riskGroupsRules, this::onRuleClick)
         recycler_fragment_results_risk_groups.adapter = adapter
         button_results_fragment_close.setOnClickListener {
             findNavController().navigate(R.id.action_resultsFragment_to_startFragment)
         }
     }
 
-
+    private fun onRuleClick(rule: Rule){
+        mainViewModel.ruleToExplain = rule
+        findNavController().navigate(R.id.action_resultsFragment_to_explanationFragment)
+    }
 }

@@ -17,4 +17,6 @@
     <string name="diseases">Choroby</string>
     <string name="medical_diagnosis">Diagnostyka medyczna</string>
     <string name="continue_diagnosis">Kontynuuj</string>
+    <string name="premises_implying_the_conclusion">Przesłanki prowadzące do konkluzji:</string>
+    <string name="explanation">Objanienie</string>
 </resources>
