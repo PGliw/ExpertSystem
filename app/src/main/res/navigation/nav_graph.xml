@@ -17,18 +17,23 @@
     <fragment
         android:id="@+id/questionFragment"
         android:name="com.pwr.expertsystem.QuestionFragment"
-        android:label="fragment_question"
-        tools:layout="@layout/fragment_question" >
+        android:label="@string/medical_diagnosis"
+        tools:layout="@layout/fragment_question">
         <action
             android:id="@+id/action_questionFragment_to_resultsFragment"
             app:destination="@id/resultsFragment" />
         <action
             android:id="@+id/action_questionFragment_self"
-            app:destination="@id/questionFragment" />
+            app:destination="@id/questionFragment"
+            app:popUpTo="@+id/startFragment" />
     </fragment>
     <fragment
         android:id="@+id/resultsFragment"
         android:name="com.pwr.expertsystem.ResultsFragment"
-        android:label="fragment_results"
-        tools:layout="@layout/fragment_results" />
+        android:label="@string/diagnosis_results"
+        tools:layout="@layout/fragment_results" >
+        <action
+            android:id="@+id/action_resultsFragment_to_startFragment"
+            app:destination="@id/startFragment" />
+    </fragment>
 </navigation>

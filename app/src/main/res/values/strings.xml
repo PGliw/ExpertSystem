@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Expert System</string>
-    <string name="start_assessment">Rozpocznij diagnostykę</string>
+    <string name="start_assessment">Rozpocznij</string>
     <string name="expert_system">System ekspertowy</string>
     <string name="digestive_tract_diseases_diagnosis">Diagnostyka chorób przewodu pokarmowego</string>
 
@@ -11,4 +11,10 @@
     <string name="no">Nie</string>
     <string name="skip">Pomiń</string>
     <string name="help">Pomoc</string>
+    <string name="finish_diagnosis">Zakończ diagnostykę</string>
+    <string name="diagnosis_results">Wyniki diagnostyki</string>
+    <string name="risk_groups">Grupy ryzyka</string>
+    <string name="diseases">Choroby</string>
+    <string name="medical_diagnosis">Diagnostyka medyczna</string>
+    <string name="continue_diagnosis">Kontynuuj</string>
 </resources>

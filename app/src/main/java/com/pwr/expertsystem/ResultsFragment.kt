@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.pwr.expertsystem.adapters.ResultsAdapter
 import kotlinx.android.synthetic.main.fragment_results.*
@@ -33,6 +34,9 @@ class ResultsFragment : Fragment() {
         recycler_fragment_results_risk_groups.layoutManager = LinearLayoutManager(requireContext())
         val adapter = ResultsAdapter(mainViewModel.interfaceEngine.riskGroupsRules)
         recycler_fragment_results_risk_groups.adapter = adapter
+        button_results_fragment_close.setOnClickListener {
+            findNavController().navigate(R.id.action_resultsFragment_to_startFragment)
+        }
     }
 
 
