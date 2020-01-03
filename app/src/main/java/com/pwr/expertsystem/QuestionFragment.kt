@@ -2,15 +2,17 @@ package com.pwr.expertsystem
 
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
 import android.widget.RadioButton
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
+import com.pwr.expertsystem.business_logic.Answered
+import com.pwr.expertsystem.business_logic.Question
+import com.pwr.expertsystem.business_logic.Skipped
 import com.pwr.expertsystem.utils.selectedPosition
 import com.pwr.expertsystem.utils.snack
 import kotlinx.android.synthetic.main.fragment_question.*
@@ -38,76 +40,81 @@ class QuestionFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val rand = mainViewModel.next()
-        when (rand % 4) {
-            0 -> renderCustomRadioQuestion()
-            1 -> renderNumericalQuestion()
-            2 -> renderAutocompleteQuestion()
-            else -> renderYesNoSkipQuestion()
+        val question = mainViewModel.interfaceEngine.getNextRiskGroupQuestion()
+        if (question != null) text_question_fragment_question_content.text = question.content
+        else snack("End")
+        when (question) {
+            is Question.NumericalQuestion -> renderQuestion(question)
+            is Question.BooleanQuestion -> renderQuestion(question)
+            is Question.RadioQuestion -> renderQuestion(question)
+            is Question.AutoFillQuestion -> renderQuestion(question)
         }
     }
 
-    private fun renderNumericalQuestion() {
+    private fun renderQuestion(question: Question.NumericalQuestion) {
         stub_fragment_question.layoutResource = R.layout.question_input_numerical
         stub_fragment_question.inflate()
         button_question_fragment_next.setOnClickListener {
             val age = edit_text_question_input_numerical.text.toString()
-            snack(age)
+            question.answerStatus = Answered(age.toInt())
             navigateToNextQuestion()
         }
     }
 
-    private fun renderYesNoSkipQuestion() {
+    private fun renderQuestion(question: Question.BooleanQuestion) {
         stub_fragment_question.layoutResource = R.layout.question_input_radio_yes_no_skip
         stub_fragment_question.inflate()
         button_question_fragment_next.setOnClickListener {
-            val selectedPos = radio_group_question_radio_input_yes_no_skip.selectedPosition
-            snack("$selectedPos")
+            val answer = when (radio_group_question_radio_input_yes_no_skip.selectedPosition) {
+                0 -> Answered(true)
+                1 -> Answered(false)
+                else -> Skipped<Boolean>()
+            }
+            question.answerStatus = answer
             navigateToNextQuestion()
         }
     }
 
-    private fun renderCustomRadioQuestion() {
+    private fun renderQuestion(question: Question.RadioQuestion) {
         stub_fragment_question.layoutResource = R.layout.question_input_radio_custom
         stub_fragment_question.inflate()
-        val option1 = RadioButton(requireContext()).apply {
-            text = "Option1"
-        }
-        val option2 = RadioButton(requireContext()).apply {
-            text = "Option2"
-        }
-        val option3 = RadioButton(requireContext()).apply {
-            text = "Option2"
-        }
-        val option4 = RadioButton(requireContext()).apply {
-            text = getString(R.string.skip)
-        }
+        // Inflate radio buttons
         radio_group_question_radio_input_custom.apply {
-            addView(option1)
-            addView(option2)
-            addView(option3)
-            addView(option4)
+            for (option in question.options) {
+                val optionRadioButton = RadioButton(requireContext()).apply {
+                    text = option
+                }
+                addView(optionRadioButton)
+            }
+            val optionSkip = RadioButton(requireContext()).apply {
+                text = getString(R.string.skip)
+            }
+            addView(optionSkip)
         }
 
         button_question_fragment_next.setOnClickListener {
-            val selectedPos = radio_group_question_radio_input_custom.selectedPosition
-            snack("$selectedPos")
+            val answer =
+                when (val selectedPos = radio_group_question_radio_input_custom.selectedPosition) {
+                    in question.options.indices -> Answered(question.options[selectedPos])
+                    else -> Skipped<String>()
+                }
+            question.answerStatus = answer
             navigateToNextQuestion()
         }
     }
 
-    private fun renderAutocompleteQuestion() {
+    private fun renderQuestion(question: Question.AutoFillQuestion) {
         stub_fragment_question.layoutResource = R.layout.question_input_autocomplete
         stub_fragment_question.inflate()
 
         val adapter = ArrayAdapter<String>(
-            requireContext(), android.R.layout.simple_list_item_1, arrayOf("aaaa", "aaab", "aaac"))
-
+            requireContext(), android.R.layout.simple_list_item_1, question.hints
+        )
         edit_text_question_input_autocomplete.setAdapter(adapter)
 
         button_question_fragment_next.setOnClickListener {
             val text = edit_text_question_input_autocomplete.text.toString()
-            snack(text)
+            question.answerStatus = Answered(listOf(text)) // TODO enable multiple items choice
             navigateToNextQuestion()
         }
     }
