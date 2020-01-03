@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical" android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="120dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -18,20 +20,22 @@
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Celiaklia"/>
 
         <TextView
             android:id="@+id/text_results_item_subtitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
             app:layout_constraintEnd_toEndOf="@id/text_results_item_title"
             app:layout_constraintStart_toStartOf="@id/text_results_item_title"
             app:layout_constraintTop_toBottomOf="@id/text_results_item_title"
-            app:layout_constraintBottom_toTopOf="@id/progress_bar_item_subtitle"/>
+            app:layout_constraintBottom_toTopOf="@id/progress_bar_item"
+            tools:text="1 na 1 przesłanek spełnionych"/>
 
         <ProgressBar
-            android:id="@+id/progress_bar_item_subtitle"
+            android:id="@+id/progress_bar_item"
             style="@style/Widget.AppCompat.ProgressBar.Horizontal"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

@@ -6,7 +6,7 @@ class InterfaceEngine {
     private val riskGroupFound = MutableLiveData<String>()
     private val riskGroups = mutableSetOf<String>()
     private val riskGroupsInterview = RiskGroupsInterview()
-    private val riskGroupsRules = listOf(
+    val riskGroupsRules = listOf(
         Rule(
             conditions = setOf(
                 Condition(
@@ -79,4 +79,9 @@ class InterfaceEngine {
             nextRule?.conditions?.find { condition -> condition.conditionStatus == NotChecked }
         return Pair(nextRule, nextCondition?.question)
     }
+
+    /**
+     *
+     */
+    // get rules by hit rate (upper limit)
 }
