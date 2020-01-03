@@ -1,6 +1,10 @@
 package com.pwr.expertsystem.business_logic
 
+import androidx.lifecycle.MutableLiveData
+
 class InterfaceEngine {
+    private val riskGroupFound = MutableLiveData<String>()
+    private val riskGroups = mutableSetOf<String>()
     private val riskGroupsInterview = RiskGroupsInterview()
     private val riskGroupsRules = listOf(
         Rule(
@@ -10,8 +14,7 @@ class InterfaceEngine {
                     riskGroupsInterview.age
                 ) { it >= 40 }
             ),
-            //conclusion = { interview.riskGroups.add("Choroba refluksowa przełyku") }
-            conclusion = { println("CONCLUSION: Choroba refluksowa przełyku") }
+            conclusion = Conclusion("Grupa ryzyka", "Choroba refluksowa przełyku")
         ),
         Rule(
             conditions = setOf(
@@ -32,8 +35,7 @@ class InterfaceEngine {
                     riskGroupsInterview.drinking
                 ) { it }
             ),
-            //conclusion = { interview.riskGroups.add("Rak przełyku") }
-            conclusion = { println("CONCLUSION: Rak przełyku") }
+            conclusion = Conclusion("Grupa ryzyka", "Rak przełyku")
         ),
         Rule(
             conditions = setOf(
@@ -50,8 +52,7 @@ class InterfaceEngine {
                     }
                 }
             ),
-            //conclusion = { interview.riskGroups.add("Choroba wrzodowa żołądka") }
-            conclusion = { println("CONCLUSION: Choroba wrzodowa żołądka") }
+            conclusion = Conclusion("Grupa ryzyka", "Choroba wrzodowa żołądka")
         ),
         Rule(
             conditions = setOf(
@@ -64,17 +65,18 @@ class InterfaceEngine {
                     }
                 }
             ),
-            // conclusion = { interview.riskGroups.add("Celiaklia") }
-            conclusion = { println("Celiaklia") }
+            conclusion = Conclusion("Grupa ryzyka", "Celiaklia")
         ))
 
     /**
      * Returns the next question to ask within Risk Groups questions group.
      * If there are no question left it returns null.
      */
-    fun getNextRiskGroupQuestion(): Question<out Any>?{
-        val nextRule = riskGroupsRules.find { it.conditions.any{ condition -> condition.conditionStatus == NotChecked } }
-        val nextCondition = nextRule?.conditions?.find { condition -> condition.conditionStatus == NotChecked  }
-        return nextCondition?.question
+    fun getNextRiskGroupQuestion(): Pair<Rule?, Question<out Any>?> {
+        val nextRule =
+            riskGroupsRules.find { it.conditions.any { condition -> condition.conditionStatus == NotChecked } }
+        val nextCondition =
+            nextRule?.conditions?.find { condition -> condition.conditionStatus == NotChecked }
+        return Pair(nextRule, nextCondition?.question)
     }
 }

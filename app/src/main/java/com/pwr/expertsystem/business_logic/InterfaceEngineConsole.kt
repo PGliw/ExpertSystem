@@ -77,7 +77,14 @@ class Condition<T>(
 
 class Rule(
     val conditions: Set<Condition<out Any>>,
-    val conclusion: () -> Unit
+    val conclusion: Conclusion
+){
+    fun eval() = conditions.all { it.conditionStatus == Checked(true) }
+}
+
+data class Conclusion(
+    val label: String,
+    val value: String
 )
 
 
@@ -91,7 +98,7 @@ fun Rule.process() {
             true
         )
         }){
-        conclusion.invoke()
+        print(conclusion)
     }
 }
 
