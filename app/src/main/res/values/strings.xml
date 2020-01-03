@@ -19,4 +19,5 @@
     <string name="continue_diagnosis">Kontynuuj</string>
     <string name="premises_implying_the_conclusion">Przesłanki prowadzące do konkluzji:</string>
     <string name="explanation">Objanienie</string>
+    <string name="condition_status">condition status</string>
 </resources>

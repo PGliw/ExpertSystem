@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
+import com.pwr.expertsystem.adapters.ConditionsAdapter
 import com.pwr.expertsystem.business_logic.Rule
 import com.pwr.expertsystem.utils.getConditionsDescriptions
 import kotlinx.android.synthetic.main.fragment_explanation.*
@@ -47,10 +48,9 @@ class ExplanationFragment : Fragment() {
         }
         val conclusionText = "${rule.conclusion.label} = ${rule.conclusion.value}"
         text_fragment_explanation_rule_conclusion.text = conclusionText
-        list_fragment_explanation_conditions.adapter = ArrayAdapter<String>(
+        list_fragment_explanation_conditions.adapter = ConditionsAdapter(
             requireContext(),
-            android.R.layout.simple_list_item_1,
-            rule.getConditionsDescriptions()
+            rule.conditions.toTypedArray()
         )
     }
 }
