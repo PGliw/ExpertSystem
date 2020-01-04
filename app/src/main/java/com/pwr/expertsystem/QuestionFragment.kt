@@ -66,8 +66,8 @@ class QuestionFragment : Fragment() {
         stub_fragment_question.layoutResource = R.layout.question_input_numerical
         stub_fragment_question.inflate()
         button_question_fragment_next.setOnClickListener {
-            val age = edit_text_question_input_numerical.text.toString()
-            question.answerStatus = Answered(age.toInt())
+            val age = edit_text_question_input_numerical.text.toString().toIntOrNull()
+            question.answerStatus = if(age != null) Answered(age) else Skipped()
             rule.evalRuleAndNavigate()
         }
     }
@@ -125,7 +125,8 @@ class QuestionFragment : Fragment() {
 
         button_question_fragment_next.setOnClickListener {
             val text = edit_text_question_input_autocomplete.text.toString()
-            question.answerStatus = Answered(listOf(text)) // TODO enable multiple items choice
+            // TODO enable multiple choice
+            question.answerStatus = if(text.isNotBlank()) Answered(listOf(text)) else Skipped()
             rule.evalRuleAndNavigate()
         }
     }
