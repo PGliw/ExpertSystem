@@ -16,9 +16,9 @@ class RiskGroupsInterview : IInterview{
         arrayOf("Cukrzyca typu 1.", "Zespół Downa", "Zespół Turnera")
     )
     private val medicines =
-        Question.AutoFillQuestion(
-            "Jakie leki przyjmuje pacjent?",
-            arrayOf("NSLPZ", "Leki przeciwzakrzepowe")
+        Question.MultiChoiceQuestion(
+            "Które z poniższych leków przyjmuje pacjent?",
+            arrayOf("NSLPZ", "Leki przeciwzakrzepowe", "Żadne z wymienionych")
         )
 
     override val rules = listOf(

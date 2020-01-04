@@ -2,15 +2,16 @@ package com.pwr.expertsystem
 
 
 import android.app.AlertDialog
-import android.app.Dialog
-import android.content.DialogInterface
 import android.os.Bundle
-import android.os.Message
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.CheckBox
+import android.widget.LinearLayout
 import android.widget.RadioButton
+import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
@@ -19,10 +20,9 @@ import com.pwr.expertsystem.business_logic.Question
 import com.pwr.expertsystem.business_logic.Rule
 import com.pwr.expertsystem.business_logic.Skipped
 import com.pwr.expertsystem.utils.selectedPosition
-import com.pwr.expertsystem.utils.snack
-import com.pwr.expertsystem.utils.toast
 import kotlinx.android.synthetic.main.fragment_question.*
 import kotlinx.android.synthetic.main.question_input_autocomplete.*
+import kotlinx.android.synthetic.main.question_input_multichoice.*
 import kotlinx.android.synthetic.main.question_input_numerical.*
 import kotlinx.android.synthetic.main.question_input_radio_custom.*
 import kotlinx.android.synthetic.main.question_input_radio_yes_no_skip.*
@@ -31,6 +31,10 @@ import kotlinx.android.synthetic.main.question_input_radio_yes_no_skip.*
  * A simple [Fragment] subclass.
  */
 class QuestionFragment : Fragment() {
+
+    companion object{
+        const val TAG = "QuestionFragment"
+    }
 
     private val mainViewModel by lazy {
         ViewModelProviders.of(requireActivity())[MainViewModel::class.java]
@@ -47,7 +51,7 @@ class QuestionFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val (rule, question) = mainViewModel.interfaceEngine.getNextRuleAndQuestion()
-        if (question != null && rule != null){
+        if (question != null && rule != null) {
             text_question_fragment_question_content.text = question.content
             help_button.setOnClickListener {
                 rule.renderHelp()
@@ -57,9 +61,9 @@ class QuestionFragment : Fragment() {
                 is Question.BooleanQuestion -> renderQuestion(question, rule)
                 is Question.RadioQuestion -> renderQuestion(question, rule)
                 is Question.AutoFillQuestion -> renderQuestion(question, rule)
+                is Question.MultiChoiceQuestion -> renderQuestion(question, rule)
             }
-        }
-        else findNavController().navigate(R.id.action_questionFragment_to_resultsFragment)
+        } else findNavController().navigate(R.id.action_questionFragment_to_resultsFragment)
     }
 
     private fun renderQuestion(question: Question.NumericalQuestion, rule: Rule) {
@@ -67,7 +71,7 @@ class QuestionFragment : Fragment() {
         stub_fragment_question.inflate()
         button_question_fragment_next.setOnClickListener {
             val age = edit_text_question_input_numerical.text.toString().toIntOrNull()
-            question.answerStatus = if(age != null) Answered(age) else Skipped()
+            question.answerStatus = if (age != null) Answered(age) else Skipped()
             rule.evalRuleAndNavigate()
         }
     }
@@ -126,17 +130,39 @@ class QuestionFragment : Fragment() {
         button_question_fragment_next.setOnClickListener {
             val text = edit_text_question_input_autocomplete.text.toString()
             // TODO enable multiple choice
-            question.answerStatus = if(text.isNotBlank()) Answered(listOf(text)) else Skipped()
+            question.answerStatus = if (text.isNotBlank()) Answered(listOf(text)) else Skipped()
             rule.evalRuleAndNavigate()
         }
     }
 
-    private fun Rule.renderHelp(){
-        val message = "Sprawdzana jest reguła o wniosku:\n ${conclusion.label} = ${conclusion.value}"
+    private fun renderQuestion(question: Question.MultiChoiceQuestion, rule: Rule) {
+        stub_fragment_question.layoutResource = R.layout.question_input_multichoice
+        stub_fragment_question.inflate()
+
+        linear_layout_question_input_multichoice.apply {
+            for (option in question.options) {
+                val optionCheckBox = CheckBox(requireContext()).apply {
+                    text = option
+                }
+                addView(optionCheckBox)
+            }
+        }
+
+        button_question_fragment_next.setOnClickListener {
+            val checkedCheckBoxes = linear_layout_question_input_multichoice.getCheckedCheckboxes()
+            val checkedOptions = checkedCheckBoxes.map { it.text.toString() }
+            question.answerStatus = if(checkedOptions.isEmpty()) Skipped() else Answered(checkedOptions)
+            rule.evalRuleAndNavigate()
+        }
+    }
+
+    private fun Rule.renderHelp() {
+        val message =
+            "Sprawdzana jest reguła o wniosku:\n ${conclusion.label} = ${conclusion.value}"
         AlertDialog.Builder(requireContext())
             .setTitle("Dlaczego to pytanie")
             .setMessage(message)
-            .setPositiveButton("Zamknij"){ dialog, _ ->
+            .setPositiveButton("Zamknij") { dialog, _ ->
                 dialog.dismiss()
             }
             .show()
@@ -163,5 +189,13 @@ class QuestionFragment : Fragment() {
                 navigateToNextQuestion()
             }
             .show()
+    }
+
+    private fun LinearLayout.getCheckedCheckboxes(): List<CheckBox> {
+        val result = mutableListOf<CheckBox>()
+        for (child in children) {
+            if (child is CheckBox && child.isChecked) result.add(child)
+        }
+        return result
     }
 }

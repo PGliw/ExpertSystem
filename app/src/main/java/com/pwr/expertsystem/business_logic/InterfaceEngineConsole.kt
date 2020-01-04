@@ -58,6 +58,12 @@ sealed class Question<T>(val content: String, var answerStatus: AnswerStatus<T> 
         val hints: Array<String>,
         answerStatus: AnswerStatus<List<String>> = NotAsked()
     ) : Question<List<String>>(content, answerStatus)
+
+    class MultiChoiceQuestion(
+        content: String,
+        val options: Array<String>,
+        answerStatus: AnswerStatus<List<String>> = NotAsked()
+    ) : Question<List<String>>(content, answerStatus)
 }
 
 class Condition<T>(
