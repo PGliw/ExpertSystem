@@ -5,8 +5,11 @@ class InterfaceEngine {
     private var diseasesInterview: IInterview? = null
     private var currentInterview: IInterview = riskGroupsInterview
 
-    val riskGroupsRules = riskGroupsInterview.rules
-    val diseasesRules = diseasesInterview?.rules
+    val riskGroupsRules: List<Rule>
+        get() = riskGroupsInterview.rules
+
+    val diseasesRules: List<Rule>?
+        get() = diseasesInterview?.rules
 
     /**
      * Returns the next question to ask within Risk Groups questions group.
