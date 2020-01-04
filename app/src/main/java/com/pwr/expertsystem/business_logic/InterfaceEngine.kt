@@ -1,11 +1,40 @@
 package com.pwr.expertsystem.business_logic
 
-import androidx.lifecycle.MutableLiveData
-
 class InterfaceEngine {
-    private val riskGroupFound = MutableLiveData<String>()
-    private val riskGroups = mutableSetOf<String>()
     private val riskGroupsInterview = RiskGroupsInterview()
+    private val diseasesInterview = DiseasesInterview(setOf()) // TODO pass set of risk groups form riskGroupInterview
+
+    fun getNextRuleAndQuestion(): Pair<Rule?, Question<out Any>?>{
+        return when(val nextDQ = getNextRiskGroupRuleAndQuestion()){
+            Pair(null, null) -> getNextDiseaseRuleAndQuestion()
+            else -> getNextRiskGroupRuleAndQuestion()
+        }
+    }
+
+    /**
+     * Returns the next question to ask within Risk Groups questions group.
+     * If there are no question left it returns null.
+     */
+    private fun getNextRiskGroupRuleAndQuestion(): Pair<Rule?, Question<out Any>?> {
+        val nextRule =
+            riskGroupsRules.find { it.conditions.any { condition -> condition.conditionStatus == NotChecked } }
+        val nextCondition =
+            nextRule?.conditions?.find { condition -> condition.conditionStatus == NotChecked }
+        return Pair(nextRule, nextCondition?.question)
+    }
+
+    /**
+     * Returns the next question to ask within Diseases Groups questions group.
+     * If there are no question left it returns null.
+     */
+    private fun getNextDiseaseRuleAndQuestion(): Pair<Rule?, Question<out Any>?> {
+        val nextRule =
+            diseasesRules.find { it.conditions.any { condition -> condition.conditionStatus == NotChecked } }
+        val nextCondition =
+            nextRule?.conditions?.find { condition -> condition.conditionStatus == NotChecked }
+        return Pair(nextRule, nextCondition?.question)
+    }
+
     val riskGroupsRules = listOf(
         Rule(
             conditions = setOf(
@@ -68,17 +97,59 @@ class InterfaceEngine {
             conclusion = Conclusion("Grupa ryzyka", "Celiaklia")
         ))
 
-    /**
-     * Returns the next question to ask within Risk Groups questions group.
-     * If there are no question left it returns null.
-     */
-    fun getNextRiskGroupQuestion(): Pair<Rule?, Question<out Any>?> {
-        val nextRule =
-            riskGroupsRules.find { it.conditions.any { condition -> condition.conditionStatus == NotChecked } }
-        val nextCondition =
-            nextRule?.conditions?.find { condition -> condition.conditionStatus == NotChecked }
-        return Pair(nextRule, nextCondition?.question)
-    }
+    val diseasesRules = listOf(
+        Rule(
+            conditions = setOf(
+                Condition("Pacjent ma zgagę", diseasesInterview.pyrosis) { it },
+                Condition(
+                    "U pacjenta występuje cofanie się treści żołądkowej do przełyku",
+                    diseasesInterview.reflux
+                ) { it },
+                Condition("Pacjent ma chrypkę", diseasesInterview.pyrosis) { it },
+                Condition("Pacjent ma kaszel", diseasesInterview.cough) { it },
+                Condition(
+                    "Pacjent odczuwa ból zamostkowy",
+                    diseasesInterview.retrosternalPain
+                ) { it }
+            ),
+            conclusion = Conclusion("Choroba", "Choroba refluksowa przełyku")
+        ),
+        Rule(
+            conditions = setOf(
+                Condition("Pacjent ma zgagę", diseasesInterview.pyrosis) { it },
+                Condition(
+                    "U pacjenta występuje cofanie się treści żołądkowej do przełyku",
+                    diseasesInterview.reflux
+                ) { it },
+                Condition("Pacjent ma chrypkę", diseasesInterview.pyrosis) { it },
+                Condition("Pacjent ma kaszel", diseasesInterview.cough) { it },
+                Condition(
+                    "Pacjent odczuwa ból zamostkowy",
+                    diseasesInterview.retrosternalPain
+                ) { it },
+                Condition("Pacjent cierpi na dysfagię", diseasesInterview.dysphagia){ it },
+                Condition("Pacjent cierpi na odynofagię", diseasesInterview.odynophagia){ it },
+                Condition("U pacjenta wystąpiła gwałtowna utrata masy ciała", diseasesInterview.weightLoss){ it },
+                Condition("U pacjenta występuje krwawienie z górnego odcinka przewodu pokarmowego", diseasesInterview.gastrointestinalBleeding){ it }
+                ),
+            conclusion = Conclusion("Choroba", "Ostra choroba refluksowa przełyku")
+        ),
+        Rule(
+            conditions = setOf(
+                Condition("Pacjent ma kaszel", diseasesInterview.cough) { it },
+                Condition(
+                    "Pacjent odczuwa ból zamostkowy",
+                    diseasesInterview.retrosternalPain
+                ) { it },
+                Condition("Pacjent cierpi na dysfagię", diseasesInterview.dysphagia){ it },
+                Condition("Pacjent cierpi na odynofagię", diseasesInterview.odynophagia){ it },
+                Condition("U pacjenta wystąpiła gwałtowna utrata masy ciała", diseasesInterview.weightLoss){ it },
+                Condition("Węzły chłonne pacjenta są powiększone", diseasesInterview.swollenGlands){ it }
+            ),
+            conclusion = Conclusion("Choroba", "Rak przełyku")
+        )
+    )
+
 
     /**
      *

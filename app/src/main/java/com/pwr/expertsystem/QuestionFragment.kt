@@ -46,7 +46,7 @@ class QuestionFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val (rule, question) = mainViewModel.interfaceEngine.getNextRiskGroupQuestion()
+        val (rule, question) = mainViewModel.interfaceEngine.getNextRuleAndQuestion()
         if (question != null && rule != null){
             text_question_fragment_question_content.text = question.content
             help_button.setOnClickListener {
