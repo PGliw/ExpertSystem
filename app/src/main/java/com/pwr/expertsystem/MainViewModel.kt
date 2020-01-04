@@ -10,6 +10,8 @@ class MainViewModel : ViewModel() {
     private set
 
     var ruleToExplain: Rule? = null
+    val rulesListToDisplay: List<Rule>
+        get() = interfaceEngine.riskGroupsRules
 
     fun clearResults() {
         interfaceEngine = InterfaceEngine()

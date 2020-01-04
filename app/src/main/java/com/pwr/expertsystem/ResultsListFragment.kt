@@ -6,23 +6,18 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.pwr.expertsystem.adapters.ResultsAdapter
 import com.pwr.expertsystem.business_logic.Rule
-import kotlinx.android.synthetic.main.fragment_results.*
+import kotlinx.android.synthetic.main.fragment_results_list.*
 
 /**
  * A simple [Fragment] subclass.
  */
-class ResultsFragment : Fragment() {
-
-    companion object {
-        const val NUM_SUBFRAGMENTS = 2
-    }
+class ResultsListFragment : Fragment() {
 
     private val mainViewModel by lazy{
         ViewModelProviders.of(requireActivity())[MainViewModel::class.java]
@@ -33,22 +28,21 @@ class ResultsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_results, container, false)
+        return inflater.inflate(R.layout.fragment_results_list, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        view_pager_fragment_results.adapter = ResultsPagerAdapter(this)
-
-        button_results_fragment_close.setOnClickListener {
-            findNavController().navigate(R.id.action_resultsFragment_to_startFragment)
-        }
+        // Clear the previous rule selection if any
+        mainViewModel.ruleToExplain = null
+        recycler_fragment_results_list_risk_groups.layoutManager = LinearLayoutManager(requireContext())
+        val adapter = ResultsAdapter(mainViewModel.rulesListToDisplay, this::onRuleClick)
+        recycler_fragment_results_list_risk_groups.adapter = adapter
     }
 
-
-    class ResultsPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment){
-        override fun getItemCount(): Int = NUM_SUBFRAGMENTS
-        override fun createFragment(position: Int): Fragment = ResultsListFragment()
+    private fun onRuleClick(rule: Rule){
+        mainViewModel.ruleToExplain = rule
+        val mainNavView = requireActivity().findViewById<View>(R.id.nav_host_fragment)
+        Navigation.findNavController(mainNavView).navigate(R.id.action_resultsFragment_to_explanationFragment)
     }
 }
