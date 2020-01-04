@@ -1,5 +1,15 @@
 package com.pwr.expertsystem.business_logic
 
+interface IInterview{
+    val rules: List<Rule>
+    fun nextRuleAndQuestion(): Pair<Rule?, Question<out Any>?>{
+        val nextRule = rules.find { it.conditions.any { condition -> condition.conditionStatus == NotChecked } }
+        val nextCondition =
+            nextRule?.conditions?.find { condition -> condition.conditionStatus == NotChecked }
+        return Pair(nextRule, nextCondition?.question)
+    }
+}
+
 sealed class AnswerStatus<T>
 class NotAsked<T> : AnswerStatus<T>()
 class Skipped<T> : AnswerStatus<T>()
