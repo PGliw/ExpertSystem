@@ -1,10 +1,10 @@
 package com.pwr.expertsystem.business_logic
 
-class DiseasesInterview(riskGroups: Set<String>) : IInterview{
-    val riskGroupsQuestion = Question.AutoFillQuestion(
+class DiseasesInterview(riskGroups: List<Conclusion>) : IInterview{
+    private val riskGroupsQuestion = Question.AutoFillQuestion(
         "Jakie są grupy ryzyka?",
-        riskGroups.toTypedArray(),
-        Answered(riskGroups.toList())
+        riskGroups.map { it.value }.toTypedArray(),
+        Answered(riskGroups.map { it.value })
     )
     private val pyrosis = Question.BooleanQuestion("Czy pacjent ma zgagę?")
     private val reflux =

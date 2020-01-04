@@ -1,9 +1,22 @@
 package com.pwr.expertsystem.business_logic
 
-interface IInterview{
+/**
+ * Interface of an Interview - a set of questions and rules
+ */
+interface IInterview {
     val rules: List<Rule>
-    fun nextRuleAndQuestion(): Pair<Rule?, Question<out Any>?>{
-        val nextRule = rules.find { it.conditions.any { condition -> condition.conditionStatus == NotChecked } }
+    val conclusions: List<Conclusion>
+        get() = rules.filter {
+            it.conditions.all { condition ->
+                condition.conditionStatus == Checked(
+                    true
+                )
+            }
+        }.map { it.conclusion }
+
+    fun nextRuleAndQuestion(): Pair<Rule?, Question<out Any>?> {
+        val nextRule =
+            rules.find { it.conditions.any { condition -> condition.conditionStatus == NotChecked } }
         val nextCondition =
             nextRule?.conditions?.find { condition -> condition.conditionStatus == NotChecked }
         return Pair(nextRule, nextCondition?.question)
@@ -53,20 +66,20 @@ class Condition<T>(
     val evaluation: (T) -> Boolean
 ) {
     val conditionStatus: ConditionStatus
-    get() = when (val answer = question.answerStatus) {
-        is NotAsked -> NotChecked
-        is Skipped -> SkippedCondition
-        is Answered -> Checked(
-            result = evaluation(answer.value)
-        )
-    }
+        get() = when (val answer = question.answerStatus) {
+            is NotAsked -> NotChecked
+            is Skipped -> SkippedCondition
+            is Answered -> Checked(
+                result = evaluation(answer.value)
+            )
+        }
 }
 
 
 class Rule(
     val conditions: Set<Condition<out Any>>,
     val conclusion: Conclusion
-){
+) {
     fun eval() = conditions.all { it.conditionStatus == Checked(true) }
 }
 
@@ -76,39 +89,4 @@ data class Conclusion(
 )
 
 
-fun Rule.process() {
-    for (condition in conditions) {
-        when(condition.conditionStatus){
-            NotChecked -> condition.question.ask()
-        }
-    }
-    if(conditions.all { it.conditionStatus == Checked(
-            true
-        )
-        }){
-        print(conclusion)
-    }
-}
-
-fun Question<out Any>.ask(){
-    val prompt = when(this){
-        is Question.BooleanQuestion -> "boolean> "
-        is Question.RadioQuestion -> "radio> "
-        is Question.AutoFillQuestion -> "autofill> "
-        is Question.NumericalQuestion -> "numerical> "
-    }
-    println(content)
-    print(prompt)
-    val result = readLine() ?: throw NullPointerException("readLine() == null")
-    when(this){
-        is Question.BooleanQuestion -> answerStatus =
-            if(result == "SKIP") Skipped() else Answered(result.toBoolean())
-        is Question.RadioQuestion -> answerStatus =
-            if(result == "SKIP") Skipped() else Answered(result)
-        is Question.AutoFillQuestion -> answerStatus =
-            if(result == "SKIP") Skipped() else Answered(listOf(result))
-        is Question.NumericalQuestion -> answerStatus =
-            if(result == "SKIP") Skipped() else Answered(result.toInt())
-    }
-}
 
