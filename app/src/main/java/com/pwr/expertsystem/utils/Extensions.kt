@@ -24,4 +24,6 @@ fun Rule.getNotSatisfiedConditionsDescriptions() = conditions.filter { it.condit
 fun Rule.getSkippedConditionsDescriptions() = conditions.filter { it.conditionStatus == SkippedCondition }.map { it.description }
 fun Rule.getNotCheckedConditionsDescriptions() = conditions.filter { it.conditionStatus == NotChecked }.map { it.description }
 fun Rule.getConditionsDescriptions() = conditions.map { it.description }
+fun Rule.getSatisfiedConditions() =  conditions.filter { it.conditionStatus == Checked(true) }
+
 

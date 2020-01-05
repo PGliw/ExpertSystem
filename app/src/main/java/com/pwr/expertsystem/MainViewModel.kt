@@ -1,9 +1,9 @@
 package com.pwr.expertsystem
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.pwr.expertsystem.business_logic.InterfaceEngine
 import com.pwr.expertsystem.business_logic.Rule
+import com.pwr.expertsystem.utils.getSatisfiedConditions
 
 class MainViewModel : ViewModel() {
     /**
@@ -40,8 +40,7 @@ class MainViewModel : ViewModel() {
         rulesListToDisplay = when (interviewIndex) {
             0 -> interfaceEngine.riskGroupsRules
             else -> interfaceEngine.diseasesRules
-        }
-        Log.d("setRulesToDisplay", rulesListToDisplay.toString())
+        }?.sortedWith (compareByDescending { it.getSatisfiedConditions().size })
     }
 
     /**

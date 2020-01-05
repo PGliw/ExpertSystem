@@ -13,8 +13,8 @@ import com.pwr.expertsystem.utils.getConditionsDescriptions
 import com.pwr.expertsystem.utils.getSatisfiedConditionsDescriptions
 
 class ResultsAdapter(
-    val items: List<Rule>,
-    val onRuleClick: (Rule) -> Unit
+    private val items: List<Rule>,
+    private val onRuleClick: (Rule) -> Unit
 ) : RecyclerView.Adapter<ResultsAdapter.ResultViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ResultViewHolder {
