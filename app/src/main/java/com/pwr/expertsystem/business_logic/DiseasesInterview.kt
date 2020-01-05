@@ -1,6 +1,9 @@
 package com.pwr.expertsystem.business_logic
 
 /**
+ * Interview about diseases of the patient
+ * <p> The symptoms and diseases are loosely based on Internet. They were not consulted with any
+ * doctor and MUST NOT be used as replacement of medical examination </p>
  * @param riskGroups - risk groups retrieved in previous interview
  * They are treated as answered questions
  */

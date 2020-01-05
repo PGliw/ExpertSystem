@@ -1,5 +1,12 @@
 package com.pwr.expertsystem.business_logic
 
+/**
+ * Class responsible for examination (reasoning)
+ * <p> The actual data is loosely based on Internet. It was not consulted with any
+ * doctor and MUST NOT be used as replacement of medical examination </p>
+ * @property riskGroupsRules - rules implying if patient belongs to certain risk groups
+ * @property diseasesRules - rules implying if patient has certain diseases
+ */
 class InterfaceEngine {
     private val riskGroupsInterview = RiskGroupsInterview()
     private var diseasesInterview: IInterview? = null
@@ -12,7 +19,7 @@ class InterfaceEngine {
         get() = diseasesInterview?.rules
 
     /**
-     * Returns the next question to ask within Risk Groups questions group.
+     * @return next question to ask within Risk Groups questions group.
      * If there are no question left it returns null.
      */
     fun getNextRuleAndQuestion(): Pair<Rule?, Question<out Any>?> {

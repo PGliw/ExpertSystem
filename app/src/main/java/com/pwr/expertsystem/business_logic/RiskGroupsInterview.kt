@@ -1,5 +1,10 @@
 package com.pwr.expertsystem.business_logic
 
+/**
+ * Interview about risk groups of the patient
+ * <p> The risk groups are loosely based on Internet. They were not consulted with any
+ * doctor and MUST NOT be used as replacement of medical examination </p>
+ */
 class RiskGroupsInterview : IInterview {
     private val sex = Question.RadioQuestion(
         "Jaka jest płeć pacjenta",
