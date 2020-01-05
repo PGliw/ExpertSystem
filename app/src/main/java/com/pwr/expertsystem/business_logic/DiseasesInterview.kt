@@ -89,6 +89,17 @@ class DiseasesInterview(riskGroups: List<Conclusion>) : IInterview {
             "widoczne polipy"
         )
     )
+    private val gastroscopy = Question.MultiChoiceQuestion(
+        "Czy pacjent miał gastroskopię? Co wykazała?",
+        arrayOf(
+            "pacjent nie miał gastroskopii",
+            "nic nie wykazała",
+            "widzoczne zmiany nowotworowe w przełyku",
+            "widoczne owrzodzenie żołądka",
+            "widoczne niewielkie zmiany nowotworowe w żołądku",
+            "widoczne rozległe owrzodzenie lub guz w żołądku"
+        )
+    )
 
     override val rules = listOf(
 
@@ -158,7 +169,10 @@ class DiseasesInterview(riskGroups: List<Conclusion>) : IInterview {
                 Condition("Pacjent cierpi na dysfagię", dysphagia) { it },
                 Condition("Pacjent cierpi na odynofagię", odynophagia) { it },
                 Condition("U pacjenta wystąpiła znacząca utrata masy ciała", weightLoss) { it },
-                Condition("Węzły chłonne pacjenta są powiększone", swollenGlands) { it }
+                Condition("Węzły chłonne pacjenta są powiększone", swollenGlands) { it },
+                Condition("Gastroskopia wykazała zmiany nowotworowe w przełyku", gastroscopy){
+                    it.contains("widzoczne zmiany nowotworowe w przełyku")
+                }
             ),
             conclusion = Conclusion("Choroba", "Rak przełyku")
         ),
@@ -185,7 +199,10 @@ class DiseasesInterview(riskGroups: List<Conclusion>) : IInterview {
                 },
                 Condition("Pacjent wymiotuje", vomit) { it },
                 Condition("Pacjent odczuwa nudności", nausea) { it },
-                Condition("Pacjent odczuwa ból w nadbrzuszu", upperAbdomenPain) { it }
+                Condition("Pacjent odczuwa ból w nadbrzuszu", upperAbdomenPain) { it },
+                Condition("Gastroskopia wykazała owrzodzenie żołądka", gastroscopy){
+                    it.contains("widoczne owrzodzenie żołądka")
+                }
             ),
             conclusion = Conclusion("Choroba", "Choroba wrzodowa żołądka")
         ),
@@ -199,7 +216,10 @@ class DiseasesInterview(riskGroups: List<Conclusion>) : IInterview {
                 ) { it.contains("Rak żołądka") },
                 Condition("Pacjent odczuwa nudności", nausea) { it },
                 Condition("Pacjent odczuwa ból w nadbrzuszu", upperAbdomenPain) { it },
-                Condition("Pacjent cierpi na wzdęcia", bloatedness) { it }
+                Condition("Pacjent cierpi na wzdęcia", bloatedness) { it },
+                Condition("Gastroskopia wykazała niewielkie zmiany nowotworowe w żołądku", gastroscopy){
+                    it.contains("widoczne niewielkie zmiany nowotworowe w żołądku")
+                }
             ),
             conclusion = Conclusion("Choroba", "Wczesny rak żołądka")
         ),
@@ -219,7 +239,10 @@ class DiseasesInterview(riskGroups: List<Conclusion>) : IInterview {
                 Condition("Pacjent cierpi na odynofagię", odynophagia) { it },
                 Condition("U pacjenta wystąpiła znacząca utrata masy ciała", weightLoss) { it },
                 Condition("Pacjent ma powiększone węzły chłonne", swollenGlands) { it },
-                Condition("Pacjent wymiotuje", vomit) { it }
+                Condition("Pacjent wymiotuje", vomit) { it },
+                Condition("Gastroskopia wykazała zaawansowane zmiany nowotworowe w żołądku", gastroscopy){
+                    it.contains("widoczne rozległe owrzodzenie lub guz w żołądku")
+                }
             ),
             conclusion = Conclusion("Choroba", "Zaawansowany rak żołądka")
         ),
