@@ -68,6 +68,8 @@ class DiseasesInterview(riskGroups: List<Conclusion>) : IInterview {
     private val weakness = Question.BooleanQuestion("Czy pacjent jest osłabiony?")
     private val anemia =
         Question.BooleanQuestion("Czy u pacjent cierpi na anemię (niedokrwistość)?")
+    private val itchingPassage = Question.BooleanQuestion("Czy pacjent odczuwa świąd odbytu?")
+    private val irritability = Question.BooleanQuestion("Czy pacjent jest drażliwy")
 
     override val rules = listOf(
 
@@ -330,9 +332,78 @@ class DiseasesInterview(riskGroups: List<Conclusion>) : IInterview {
                 }
             ),
             conclusion = Conclusion("Choroba", "Rak jelita grubego")
+        ),
+
+        // 16. Choroba hemoroidalna
+        Rule(
+            conditions = setOf(
+                Condition("Pacjent odczuwa świąd odbytu", itchingPassage) { it },
+                Condition("Widoczna krew przy wypróżnianiu", bleeding) {
+                    it.contains("krew przy wypróżnianiu")
+                }
+            ),
+            conclusion = Conclusion("Choroba", "Choroba hemoroidalna")
+        ),
+
+        // 17. Owsica
+        Rule(
+            conditions = setOf(
+                Condition("Pacjent jest drażliwy", irritability) { it },
+                Condition("Pacjent odczuwa świąd odbytu", itchingPassage) { it },
+                Condition("Objawy nasilają się w nocy", symptomsIntensity) {
+                    it.contains("w nocy")
+                },
+                Condition("Pacjent nie ma apetytu", lackOfApetite) { it }
+            ),
+            conclusion = Conclusion("Choroba", "Owsica")
+        ),
+
+        // 18. Glistnica płucna
+        Rule(
+            conditions = setOf(
+                Condition("Pacjent ma gorączkę", fever) { it },
+                Condition("U pacjenta występuje odksztuszanie krwi", bleeding) {
+                    it.contains("odksztuszanie krwi")
+                },
+                Condition("Pacjent ma kaszel", cough) { it }
+            ),
+            conclusion = Conclusion("Choroba", "Glistnica płucna")
+        ),
+
+        // 19. Glistnica jelitowa
+        Rule(
+            conditions = setOf(
+                Condition("Pacjent cierpi na anemię (niedokrwistość)", anemia) { it },
+                Condition("Pacjent odczuwa ból brzucha", abdomenPain) { it },
+                Condition("Pacjent odczuwa nudności", nausea) { it },
+                Condition("U pacjenta wystąpiła znacząca utrata masy ciała", weightLoss) { it }
+            ),
+            conclusion = Conclusion("Choroba", "Glistnica jelitowa")
+        ),
+
+        // 20. Tasiemczyca
+        Rule(
+            conditions = setOf(
+                Condition("Pacjent odczuwa ból brzucha", abdomenPain) { it },
+                Condition("Pacjent ma biegunkę", diarrhoea) { it },
+                Condition("Pacjent odczuwa nudności", nausea) { it },
+                Condition("Pacjent jest drażliwy", irritability) { it },
+                Condition("U pacjenta wystąpiła znacząca utrata masy ciała", weightLoss) { it },
+                Condition("Pacjent jest osłabiony", weakness) { it },
+                Condition("Pacjent wymiotuje", vomit) { it }
+            ),
+            conclusion = Conclusion("Choroba", "Tasiemczyca")
+        ),
+
+        // 21. Niedrożnośc jelit
+        Rule(
+            conditions = setOf(
+                Condition("Pacjent ma zaparcia", obstruction) { it },
+                Condition("Pacjent odczuwa ból brzucha", abdomenPain) { it },
+                Condition("Pacjent odczuwa nudności", nausea) { it },
+                Condition("Pacjent wymiotuje", vomit) { it }
+            ),
+            conclusion = Conclusion("Choroba", "Niedrożność jelit")
         )
-
-
     )
-
 }

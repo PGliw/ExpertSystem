@@ -22,6 +22,8 @@ class RiskGroupsInterview : IInterview{
         )
 
     override val rules = listOf(
+
+        // 1. Choroba refluksowa przełyku
         Rule(
             conditions = setOf(
                 Condition(
@@ -31,6 +33,8 @@ class RiskGroupsInterview : IInterview{
             ),
             conclusion = Conclusion("Grupa ryzyka", "Choroba refluksowa przełyku")
         ),
+
+        // 2. Rak przełyku
         Rule(
             conditions = setOf(
                 Condition(
@@ -52,6 +56,8 @@ class RiskGroupsInterview : IInterview{
             ),
             conclusion = Conclusion("Grupa ryzyka", "Rak przełyku")
         ),
+
+        // 3. Choroba wrzodowa żołądka
         Rule(
             conditions = setOf(
                 Condition(
@@ -69,6 +75,8 @@ class RiskGroupsInterview : IInterview{
             ),
             conclusion = Conclusion("Grupa ryzyka", "Choroba wrzodowa żołądka")
         ),
+
+        // 4. Celiaklia
         Rule(
             conditions = setOf(
                 Condition(
@@ -79,6 +87,7 @@ class RiskGroupsInterview : IInterview{
                         disease in arrayOf("Cukrzyca typu 1.", "Zespół Downa", "Zespół Turnera")
                     }
                 }
+
             ),
             conclusion = Conclusion("Grupa ryzyka", "Celiaklia")
         ))
