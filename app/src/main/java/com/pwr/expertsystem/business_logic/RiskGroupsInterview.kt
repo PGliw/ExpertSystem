@@ -11,9 +11,9 @@ class RiskGroupsInterview : IInterview{
         Question.BooleanQuestion("Czy pacjent pali?")
     private val drinking =
         Question.BooleanQuestion("Czy pacjent pije?")
-    private val diseases = Question.AutoFillQuestion(
+    private val diseases = Question.MultiChoiceQuestion(
         "Jakie choroby zdiagnozowano u pacjenta?",
-        arrayOf("Cukrzyca typu 1.", "Zespół Downa", "Zespół Turnera")
+        arrayOf("Cukrzyca typu 1.", "Zespół Downa", "Zespół Turnera", "Żadne z powyższych")
     )
     private val medicines =
         Question.MultiChoiceQuestion(

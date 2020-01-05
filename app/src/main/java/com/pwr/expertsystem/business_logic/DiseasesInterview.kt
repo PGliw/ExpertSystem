@@ -37,7 +37,7 @@ class DiseasesInterview(riskGroups: List<Conclusion>) : IInterview {
     private val nausea = Question.BooleanQuestion("Czy pacjentowi dokuczają nudności?")
     private val vomit = Question.BooleanQuestion("Czy pacjent wymiotuje?")
     private val bloatedness = Question.BooleanQuestion("Czy pacjent ma wzdęcia?")
-    private val lackOfApeetite = Question.BooleanQuestion("Czy pacjent nie ma apetytu?")
+    private val lackOfApetite = Question.BooleanQuestion("Czy pacjent nie ma apetytu?")
     private val abdomenPain = Question.BooleanQuestion("Czy pacjent odczuwa ból brzucha?")
     private val symptomsIntensity = Question.MultiChoiceQuestion(
         "Kiedy objawy się nasilają?",
@@ -66,6 +66,8 @@ class DiseasesInterview(riskGroups: List<Conclusion>) : IInterview {
         Question.BooleanQuestion("Czy pacjent odczuwa nagłe parcie na stolec?")
     private val fever = Question.BooleanQuestion("Czy pacjent ma gorączkę?")
     private val weakness = Question.BooleanQuestion("Czy pacjent jest osłabiony?")
+    private val anemia =
+        Question.BooleanQuestion("Czy u pacjent cierpi na anemię (niedokrwistość)?")
 
     override val rules = listOf(
 
@@ -166,6 +168,7 @@ class DiseasesInterview(riskGroups: List<Conclusion>) : IInterview {
             conditions = setOf(
                 Condition("Pacjent odczuwa nudności", nausea) { it },
                 Condition("Pacjent odczuwa ból w nadbrzuszu", upperAbdomenPain) { it },
+                Condition("Pacjent nie ma apetytu", lackOfApetite) { it },
                 Condition("Pacjent cierpi na wzdęcia", bloatedness) { it },
                 Condition("Pacjent cierpi na dysfagię", dysphagia) { it },
                 Condition("Pacjent cierpi na odynofagię", odynophagia) { it },
@@ -244,13 +247,92 @@ class DiseasesInterview(riskGroups: List<Conclusion>) : IInterview {
                 },
                 Condition("Pacjent odczuwa ból brzucha", abdomenPain) { it },
                 Condition("Pacjent ma biegunkę", diarrhoea) { it },
-                Condition("W kale pacjenta występuje krew", bleeding){
+                Condition("W kale pacjenta występuje krew", bleeding) {
                     it.contains("krew w kale")
                 },
                 Condition("U pacjenta wystąpiła znacząca utrata masy ciała", weightLoss) { it }
-                ),
+            ),
             conclusion = Conclusion("Choroba", "Wrzodziejące zapalenie jelita grubego")
+        ),
+
+        // 11. Choroba Leśniowskiego i Crohna
+        Rule(
+            conditions = setOf(
+                Condition("Pacjent cierpi na anemię (niedokrwistość)", anemia) { it },
+                Condition("Pacjent ma gorączkę", fever) { it },
+                Condition("Pacjent jest osłabiony", weakness) { it },
+                Condition("Pacjent odczuwa ból brzucha", abdomenPain) { it },
+                Condition("Pacjent ma biegunkę", diarrhoea) { it },
+                Condition("Pacjent nie ma apetytu", lackOfApetite) { it },
+                Condition("U pacjenta wystąpiła znacząca utrata masy ciała", weightLoss) { it }
+            ),
+            conclusion = Conclusion("Choroba", "Choroba Leśniowskiego i Crohna")
+        ),
+
+        // 12. Mikroskopowe zapalenie jelita grubego
+        Rule(
+            conditions = setOf(
+                Condition("Pacjent odczuwa nagłe parcie na stolec", suddenBowelMovement) { it },
+                Condition("Pacjent odczuwa ból brzucha", abdomenPain) { it },
+                Condition("Pacjent ma biegunkę", diarrhoea) { it }
+            ),
+            conclusion = Conclusion("Choroba", "Mikroskopowe zapalenie jelita grubego")
+        ),
+
+        // 13. Zapalenie wyrostka robaczkowego
+        Rule(
+            conditions = setOf(
+                Condition("Pacjent odczuwa ból brzucha", abdomenPain) { it },
+                Condition("Pacjent nie ma apetytu", lackOfApetite) { it },
+                Condition("Pacjent wymiotuje", vomit) { it },
+                Condition("Pacjent odczuwa nudności", nausea) { it }
+            ),
+            conclusion = Conclusion("Choroba", "Zapalenie wyrostka robaczkowego")
+        ),
+
+        // 14. Polipy jelita grubego
+        Rule(
+            conditions = setOf(
+                Condition("Pacjent odczuwa nagłe parcie na stolec", suddenBowelMovement) { it },
+                Condition("Pacjent ma biegunkę", diarrhoea) { it },
+                Condition(
+                    "Pacjent ma zmienną intensywność wypróżnień",
+                    evacuationFrequency
+                ) { it == "zmienna intensywność" },
+                Condition(
+                    "U pacjenta występuje krwawienie z odbytnicy lub krew w kale",
+                    bleeding
+                ) {
+                    it.contains("krwawienie z odbytnicy") || it.contains("krew w kale")
+                }
+            ),
+            conclusion = Conclusion("Choroba", "Polipy jelita grubego")
+        ),
+
+        // 15. Rak jelita grubego
+        Rule(
+            conditions = setOf(
+                Condition("Pacjent odczuwa nagłe parcie na stolec", suddenBowelMovement) { it },
+                Condition("Pacjent ma zaparcia", obstruction) { it },
+                Condition("Pacjent jest osłabiony", weakness) { it },
+                Condition("Pacjent cierpi na anemię (niedokrwistość)", anemia) { it },
+                Condition(
+                    "Pacjent ma zmienną intensywność wypróżnień",
+                    evacuationFrequency
+                ) { it == "zmienna intensywność" },
+                Condition(
+                    "U pacjenta występuje krwawienie z dolnego odcinka przewodu pokarmowego lub krew w kale",
+                    bleeding
+                ) {
+                    it.contains("krwawienie z odbytnicy") ||
+                            it.contains("krew w kale") ||
+                            it.contains("krwawienie z dolnego odcinka przewodu pokarmowego")
+                }
+            ),
+            conclusion = Conclusion("Choroba", "Rak jelita grubego")
         )
+
+
     )
 
 }
