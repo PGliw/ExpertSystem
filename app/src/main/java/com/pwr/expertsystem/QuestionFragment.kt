@@ -60,7 +60,6 @@ class QuestionFragment : Fragment() {
                 is Question.NumericalQuestion -> renderQuestion(question, rule)
                 is Question.BooleanQuestion -> renderQuestion(question, rule)
                 is Question.RadioQuestion -> renderQuestion(question, rule)
-                is Question.AutoFillQuestion -> renderQuestion(question, rule)
                 is Question.MultiChoiceQuestion -> renderQuestion(question, rule)
             }
         } else findNavController().navigate(R.id.action_questionFragment_to_resultsFragment)
@@ -117,24 +116,7 @@ class QuestionFragment : Fragment() {
             rule.evalRuleAndNavigate()
         }
     }
-
-    private fun renderQuestion(question: Question.AutoFillQuestion, rule: Rule) {
-        stub_fragment_question.layoutResource = R.layout.question_input_autocomplete
-        stub_fragment_question.inflate()
-
-        val adapter = ArrayAdapter<String>(
-            requireContext(), android.R.layout.simple_list_item_1, question.hints
-        )
-        edit_text_question_input_autocomplete.setAdapter(adapter)
-
-        button_question_fragment_next.setOnClickListener {
-            val text = edit_text_question_input_autocomplete.text.toString()
-            // TODO enable multiple choice
-            question.answerStatus = if (text.isNotBlank()) Answered(listOf(text)) else Skipped()
-            rule.evalRuleAndNavigate()
-        }
-    }
-
+    
     private fun renderQuestion(question: Question.MultiChoiceQuestion, rule: Rule) {
         stub_fragment_question.layoutResource = R.layout.question_input_multichoice
         stub_fragment_question.inflate()
