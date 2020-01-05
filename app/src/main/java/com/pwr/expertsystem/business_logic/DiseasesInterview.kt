@@ -74,6 +74,21 @@ class DiseasesInterview(riskGroups: List<Conclusion>) : IInterview {
         Question.BooleanQuestion("Czy u pacjent cierpi na anemię (niedokrwistość)?")
     private val itchingPassage = Question.BooleanQuestion("Czy pacjent odczuwa świąd odbytu?")
     private val irritability = Question.BooleanQuestion("Czy pacjent jest drażliwy")
+    private val colonoscopy = Question.MultiChoiceQuestion(
+        "Czy pacjent miał kolonoskopię? Co wykazała?",
+        arrayOf(
+            "pacjent nie miał kolonoskopii",
+            "nic nie wykazała",
+            "widoczne uchyłki",
+            "widoczne nadżerki",
+            "widzoczny zanik siatki naczyniowej",
+            "widoczne owrzodzenia",
+            "pogrubienie warstwy kolagenu",
+            "zwiększona liczba limfocytów śródnabłonkowych",
+            "widoczny guz",
+            "widoczne polipy"
+        )
+    )
 
     override val rules = listOf(
 
@@ -248,7 +263,10 @@ class DiseasesInterview(riskGroups: List<Conclusion>) : IInterview {
                 ) {
                     it in arrayOf("mniej niż 3 razy w tygodniu", "ponad 3 razy na dobę")
                 },
-                Condition("Pacjent odczuwa nagłe parcie na stolec", suddenBowelMovement) { it }
+                Condition("Pacjent odczuwa nagłe parcie na stolec", suddenBowelMovement) { it },
+                Condition("Kolonoskopia nie wykazała żadnych zmian chorobowych", colonoscopy) {
+                    it.contains("nic nie wykazała")
+                }
             ),
             conclusion = Conclusion("Choroba", "Zespół jelita drażliwego")
         ),
@@ -263,7 +281,10 @@ class DiseasesInterview(riskGroups: List<Conclusion>) : IInterview {
                 ) { it == "zmienna intensywność" },
                 Condition("Pacjent ma zaparcia", obstruction) { it },
                 Condition("Pacjent odczuwa ból brzucha", abdomenPain) { it },
-                Condition("Pacjent cierpi na wzdęcia", bloatedness) { it }
+                Condition("Pacjent cierpi na wzdęcia", bloatedness) { it },
+                Condition("W kolonoskopii widoczne uchyłki", colonoscopy) {
+                    it.contains("widoczne uchyłki")
+                }
             ),
             conclusion = Conclusion("Choroba", "Uchyłki jelita grubego")
         ),
@@ -284,7 +305,13 @@ class DiseasesInterview(riskGroups: List<Conclusion>) : IInterview {
                 Condition("W kale pacjenta występuje krew", bleeding) {
                     it.contains("krew w kale")
                 },
-                Condition("U pacjenta wystąpiła znacząca utrata masy ciała", weightLoss) { it }
+                Condition("U pacjenta wystąpiła znacząca utrata masy ciała", weightLoss) { it },
+                Condition(
+                    "W kolonoskopii widoczne nadżerki i zanik siatki naczyniowej",
+                    colonoscopy
+                ) {
+                    it.contains("widoczne nadżerki") || it.contains("widzoczny zanik siatki naczyniowej")
+                }
             ),
             conclusion = Conclusion("Choroba", "Wrzodziejące zapalenie jelita grubego")
         ),
@@ -298,7 +325,13 @@ class DiseasesInterview(riskGroups: List<Conclusion>) : IInterview {
                 Condition("Pacjent odczuwa ból brzucha", abdomenPain) { it },
                 Condition("Pacjent ma biegunkę", diarrhoea) { it },
                 Condition("Pacjent nie ma apetytu", lackOfApetite) { it },
-                Condition("U pacjenta wystąpiła znacząca utrata masy ciała", weightLoss) { it }
+                Condition("U pacjenta wystąpiła znacząca utrata masy ciała", weightLoss) { it },
+                Condition(
+                    "W kolonoskopii widoczne owrzodzenia",
+                    colonoscopy
+                ) {
+                    it.contains("widoczne owrzodzenia")
+                }
             ),
             conclusion = Conclusion("Choroba", "Choroba Leśniowskiego i Crohna")
         ),
@@ -308,7 +341,14 @@ class DiseasesInterview(riskGroups: List<Conclusion>) : IInterview {
             conditions = setOf(
                 Condition("Pacjent odczuwa nagłe parcie na stolec", suddenBowelMovement) { it },
                 Condition("Pacjent odczuwa ból brzucha", abdomenPain) { it },
-                Condition("Pacjent ma biegunkę", diarrhoea) { it }
+                Condition("Pacjent ma biegunkę", diarrhoea) { it },
+                Condition(
+                    "Mikroskopowe badanie wycinka z kolonoskopii wskazuje na stan zapalny",
+                    colonoscopy
+                ) {
+                    it.contains("pogrubienie warstwy kolagenu u podstawy komórek nabłonka") ||
+                            it.contains("zwiększona liczba limfocytów śródnabłonkowych")
+                }
             ),
             conclusion = Conclusion("Choroba", "Mikroskopowe zapalenie jelita grubego")
         ),
@@ -338,7 +378,11 @@ class DiseasesInterview(riskGroups: List<Conclusion>) : IInterview {
                     bleeding
                 ) {
                     it.contains("krwawienie z odbytnicy") || it.contains("krew w kale")
-                }
+                },
+                Condition(
+                    "W kolonoskopii widoczne polipy",
+                    colonoscopy
+                ) { it.contains("widoczne polipy") }
             ),
             conclusion = Conclusion("Choroba", "Polipy jelita grubego")
         ),
@@ -365,7 +409,11 @@ class DiseasesInterview(riskGroups: List<Conclusion>) : IInterview {
                     it.contains("krwawienie z odbytnicy") ||
                             it.contains("krew w kale") ||
                             it.contains("krwawienie z dolnego odcinka przewodu pokarmowego")
-                }
+                },
+                Condition(
+                    "W kolonoskopii widoczny guz",
+                    colonoscopy
+                ) { it.contains("widoczny guz") }
             ),
             conclusion = Conclusion("Choroba", "Rak jelita grubego")
         ),
