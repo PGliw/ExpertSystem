@@ -1,7 +1,11 @@
 package com.pwr.expertsystem.business_logic
 
+/**
+ * @param riskGroups - risk groups retrieved in previous interview
+ * They are treated as answered questions
+ */
 class DiseasesInterview(riskGroups: List<Conclusion>) : IInterview {
-    private val riskGroupsQuestion = Question.AutoFillQuestion(
+    private val riskGroupsQuestion = Question.MultiChoiceQuestion(
         "Jakie są grupy ryzyka?",
         riskGroups.map { it.value }.toTypedArray(),
         Answered(riskGroups.map { it.value })
@@ -76,12 +80,16 @@ class DiseasesInterview(riskGroups: List<Conclusion>) : IInterview {
         // 1. Choroba refluksowa przełyku
         Rule(
             conditions = setOf(
+                Condition(
+                    "Pacjent jest w grupie ryzyka",
+                    riskGroupsQuestion
+                ) { it.contains("Choroba refluksowa przełyku") },
                 Condition("Pacjent ma zgagę", pyrosis) { it },
                 Condition(
                     "U pacjenta występuje cofanie się treści żołądkowej do przełyku",
                     reflux
                 ) { it },
-                Condition("Pacjent ma chrypkę", pyrosis) { it },
+                Condition("Pacjent ma chrypkę", hoarseThroat) { it },
                 Condition("Pacjent ma kaszel", cough) { it },
                 Condition(
                     "Pacjent odczuwa ból zamostkowy",
@@ -94,12 +102,16 @@ class DiseasesInterview(riskGroups: List<Conclusion>) : IInterview {
         // 2. Ostra choroba refluksowa przełyku
         Rule(
             conditions = setOf(
+                Condition(
+                    "Pacjent jest w grupie ryzyka",
+                    riskGroupsQuestion
+                ) { it.contains("Choroba refluksowa przełyku") },
                 Condition("Pacjent ma zgagę", pyrosis) { it },
                 Condition(
                     "U pacjenta występuje cofanie się treści żołądkowej do przełyku",
                     reflux
                 ) { it },
-                Condition("Pacjent ma chrypkę", pyrosis) { it },
+                Condition("Pacjent ma chrypkę", hoarseThroat) { it },
                 Condition("Pacjent ma kaszel", cough) { it },
                 Condition(
                     "Pacjent odczuwa ból zamostkowy",
@@ -119,6 +131,10 @@ class DiseasesInterview(riskGroups: List<Conclusion>) : IInterview {
         // 3. Rak przełyku
         Rule(
             conditions = setOf(
+                Condition(
+                    "Pacjent jest w grupie ryzyka",
+                    riskGroupsQuestion
+                ) { it.contains("Rak przełyku") },
                 Condition("Pacjent ma kaszel", cough) { it },
                 Condition(
                     "Pacjent odczuwa ból zamostkowy",
@@ -136,6 +152,10 @@ class DiseasesInterview(riskGroups: List<Conclusion>) : IInterview {
         // 4. Choroba wrzodowa żołądka
         Rule(
             conditions = setOf(
+                Condition(
+                    "Pacjent jest w grupie ryzyka",
+                    riskGroupsQuestion
+                ) { it.contains("Choroba wrzodowa żołądka") },
                 Condition(
                     "Objawy pacjenta nasilają się od 1 do 3 godzin po posiłku, w nocy lub rano",
                     symptomsIntensity
@@ -158,6 +178,10 @@ class DiseasesInterview(riskGroups: List<Conclusion>) : IInterview {
         // 5. Wczesny rak żołądka
         Rule(
             conditions = setOf(
+                Condition(
+                    "Pacjent jest w grupie ryzyka",
+                    riskGroupsQuestion
+                ) { it.contains("Rak żołądka") },
                 Condition("Pacjent odczuwa nudności", nausea) { it },
                 Condition("Pacjent odczuwa ból w nadbrzuszu", upperAbdomenPain) { it },
                 Condition("Pacjent cierpi na wzdęcia", bloatedness) { it }
@@ -168,6 +192,10 @@ class DiseasesInterview(riskGroups: List<Conclusion>) : IInterview {
         // 6. Zaawansowany rak żołądka
         Rule(
             conditions = setOf(
+                Condition(
+                    "Pacjent jest w grupie ryzyka",
+                    riskGroupsQuestion
+                ) { it.contains("Rak żołądka") },
                 Condition("Pacjent odczuwa nudności", nausea) { it },
                 Condition("Pacjent odczuwa ból w nadbrzuszu", upperAbdomenPain) { it },
                 Condition("Pacjent nie ma apetytu", lackOfApetite) { it },
@@ -184,6 +212,10 @@ class DiseasesInterview(riskGroups: List<Conclusion>) : IInterview {
         // 7. Celiaklia
         Rule(
             conditions = setOf(
+                Condition(
+                    "Pacjent jest w grupie ryzyka",
+                    riskGroupsQuestion
+                ) { it.contains("Celiaklia") },
                 Condition("Pacjent odczuwa ból brzucha", abdomenPain) { it },
                 Condition("Pacjent ma biegunkę", diarrhoea) { it },
                 Condition("Pacjent wymiotuje", vomit) { it },
@@ -314,6 +346,10 @@ class DiseasesInterview(riskGroups: List<Conclusion>) : IInterview {
         // 15. Rak jelita grubego
         Rule(
             conditions = setOf(
+                Condition(
+                    "Pacjent jest w grupie ryzyka",
+                    riskGroupsQuestion
+                ) { it.contains("Rak jelita grubego") },
                 Condition("Pacjent odczuwa nagłe parcie na stolec", suddenBowelMovement) { it },
                 Condition("Pacjent ma zaparcia", obstruction) { it },
                 Condition("Pacjent jest osłabiony", weakness) { it },
@@ -337,6 +373,10 @@ class DiseasesInterview(riskGroups: List<Conclusion>) : IInterview {
         // 16. Choroba hemoroidalna
         Rule(
             conditions = setOf(
+                Condition(
+                    "Pacjent jest w grupie ryzyka",
+                    riskGroupsQuestion
+                ) { it.contains("Choroba hemoroidalna") },
                 Condition("Pacjent odczuwa świąd odbytu", itchingPassage) { it },
                 Condition("Widoczna krew przy wypróżnianiu", bleeding) {
                     it.contains("krew przy wypróżnianiu")
@@ -348,6 +388,10 @@ class DiseasesInterview(riskGroups: List<Conclusion>) : IInterview {
         // 17. Owsica
         Rule(
             conditions = setOf(
+                Condition(
+                    "Pacjent jest w grupie ryzyka",
+                    riskGroupsQuestion
+                ) { it.contains("Owsica") },
                 Condition("Pacjent jest drażliwy", irritability) { it },
                 Condition("Pacjent odczuwa świąd odbytu", itchingPassage) { it },
                 Condition("Objawy nasilają się w nocy", symptomsIntensity) {
@@ -384,6 +428,10 @@ class DiseasesInterview(riskGroups: List<Conclusion>) : IInterview {
         // 20. Tasiemczyca
         Rule(
             conditions = setOf(
+                Condition(
+                    "Pacjent jest w grupie ryzyka",
+                    riskGroupsQuestion
+                ) { it.contains("Tasiemczyca") },
                 Condition("Pacjent odczuwa ból brzucha", abdomenPain) { it },
                 Condition("Pacjent ma biegunkę", diarrhoea) { it },
                 Condition("Pacjent odczuwa nudności", nausea) { it },
