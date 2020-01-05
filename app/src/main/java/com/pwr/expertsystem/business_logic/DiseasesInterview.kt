@@ -264,7 +264,7 @@ class DiseasesInterview(riskGroups: List<Conclusion>) : IInterview {
                     it in arrayOf("mniej niż 3 razy w tygodniu", "ponad 3 razy na dobę")
                 },
                 Condition("Pacjent odczuwa nagłe parcie na stolec", suddenBowelMovement) { it },
-                Condition("Kolonoskopia nie wykazała żadnych zmian chorobowych", colonoscopy) {
+                Condition("Kolonoskopia nie wykazała zmian chorobowych", colonoscopy) {
                     it.contains("nic nie wykazała")
                 }
             ),
