@@ -183,7 +183,7 @@ class RiskGroupsInterview : IInterview {
                     }
                 }
             ),
-            conclusion = Conclusion("Grupa ryzyka", "Rak żołądka")
+            conclusion = Conclusion("Grupa ryzyka", "Rak jelita grubego")
         ),
 
         // 7. Choroba hemoroidalna
